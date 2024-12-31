@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{95DBE3BD-313C-4229-9031-CA2431853195}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookStore.Api", "src\BookStore.Api\BookStore.Api.csproj", "{12469714-926F-4C55-BDD5-E3016502EF34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookStore.Entities", "src\BookStore.Entities\BookStore.Entities.csproj", "{859C101F-36F5-46FC-A1C5-BFF8C8D31C0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookStore.Repositories", "src\BookStore.Repositories\BookStore.Repositories.csproj", "{1D9E24CD-BAB9-405D-8DBD-A9F301E1C4A4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12469714-926F-4C55-BDD5-E3016502EF34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12469714-926F-4C55-BDD5-E3016502EF34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12469714-926F-4C55-BDD5-E3016502EF34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12469714-926F-4C55-BDD5-E3016502EF34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{859C101F-36F5-46FC-A1C5-BFF8C8D31C0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{859C101F-36F5-46FC-A1C5-BFF8C8D31C0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{859C101F-36F5-46FC-A1C5-BFF8C8D31C0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{859C101F-36F5-46FC-A1C5-BFF8C8D31C0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D9E24CD-BAB9-405D-8DBD-A9F301E1C4A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D9E24CD-BAB9-405D-8DBD-A9F301E1C4A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D9E24CD-BAB9-405D-8DBD-A9F301E1C4A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D9E24CD-BAB9-405D-8DBD-A9F301E1C4A4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{12469714-926F-4C55-BDD5-E3016502EF34} = {95DBE3BD-313C-4229-9031-CA2431853195}
+		{859C101F-36F5-46FC-A1C5-BFF8C8D31C0B} = {95DBE3BD-313C-4229-9031-CA2431853195}
+		{1D9E24CD-BAB9-405D-8DBD-A9F301E1C4A4} = {95DBE3BD-313C-4229-9031-CA2431853195}
+	EndGlobalSection
+EndGlobal
