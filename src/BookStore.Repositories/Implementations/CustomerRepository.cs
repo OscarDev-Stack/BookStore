@@ -4,9 +4,9 @@ using BookStore.Repositories.Interfaces;
 
 namespace BookStore.Repositories.Implementations
 {
-    public class BookRepository : RepositoryBase<Book>, IBookRepository
+    public class CustomerRepository : RepositoryBase<Customer>, ICustomerRepository
     {
-        public BookRepository(BookStoreDbContext context) : base(context)
+        public CustomerRepository(BookStoreDbContext context) : base(context)
         {
         }
     }

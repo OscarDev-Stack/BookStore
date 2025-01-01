@@ -2,7 +2,7 @@
 
 namespace BookStore.Repositories.Interfaces
 {
-    public interface IBookRepository : IRepositoryBase<Book>
+    public interface ICustomerRepository : IRepositoryBase<Customer>
     {
     }
 }

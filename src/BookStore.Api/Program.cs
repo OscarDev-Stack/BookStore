@@ -2,6 +2,9 @@ using BookStore.Persistence;
 using Microsoft.EntityFrameworkCore;
 using BookStore.Repositories.Implementations;
 using BookStore.Repositories.Interfaces;
+using BookStore.Services.Interfaces;
+using BookStore.Services.Implementations;
+using BookStore.Services.Profiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +21,15 @@ builder.Services.AddDbContext<BookStoreDbContext>(options =>
 });
 
 builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IOrderBookRepository, OrderBookRepository>();
+builder.Services.AddScoped<IBookService, BookService>();
+
+builder.Services.AddAutoMapper(config =>
+{
+    config.AddProfile<BookProfile>();
+});
 
 var app = builder.Build();
 

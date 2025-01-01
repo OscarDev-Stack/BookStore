@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BookStore.Entities.Info;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace BookStore.Persistence
@@ -14,7 +15,15 @@ namespace BookStore.Persistence
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.Ignore<OrderInfo>();
+            modelBuilder.Ignore<OrderBookInfo>();
         }
-
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseLazyLoadingProxies();
+            }
+        }
     }
 }
