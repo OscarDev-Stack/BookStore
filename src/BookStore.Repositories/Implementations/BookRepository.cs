@@ -9,5 +9,6 @@ namespace BookStore.Repositories.Implementations
         public BookRepository(BookStoreDbContext context) : base(context)
         {
         }
+        
     }
 }

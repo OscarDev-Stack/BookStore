@@ -14,7 +14,10 @@
         public int OrderId { get; set; }
         public string OrderDateStar { get; set; } = default!;
         public string OrderTimeStar { get; set; } = default!;
+        public string OrderDateEnd { get; set; } = default!;
+        public string OrderTimeEnd { get; set; } = default!;
         public string OrderStatus { get; set; } = default!;
+        public string OrderFinalized { get; set; } = default!;
         public int CustomerId { get; set; }
         public string CustomerFullName { get; set; } = default!;
         public string CustomerDNI { get; set; } = default!;

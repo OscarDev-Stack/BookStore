@@ -3,6 +3,8 @@ using BookStore.Entities.Info;
 using BookStore.Persistence;
 using BookStore.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
+using System.Security.Cryptography.X509Certificates;
 
 namespace BookStore.Repositories.Implementations
 {
@@ -20,20 +22,60 @@ namespace BookStore.Repositories.Implementations
         {
             return await context.Set<Order>().Include(x => x.Customer).FirstOrDefaultAsync(x => x.Id == id);
         }
-        public async Task<ICollection<OrderInfo>> GetAsync(string? dni)
+        public override async Task<int> AddAsync(Order entity)
         {
-            return await context.Set<Order>().Where(x => x.Customer.DNI.Contains(dni ?? string.Empty)).
-                AsNoTracking().Select(x => new OrderInfo
+            entity.StartDate = DateTime.Now;
+            var nextNumber = await context.Set<Order>().CountAsync() + 1;
+            entity.OperationNumbre = $"{nextNumber:000000}";
+            await context.Set<Order>().AddAsync(entity);
+            await context.SaveChangesAsync();
+            return entity.Id;
+        }
+        public async Task<OrderInfo> GetAsync(string? dni)
+        {
+            var listBooks = await context.Set<OrderBook>().Where(x => x.Order.Customer.DNI.Contains(dni ?? string.Empty)).AsNoTracking().
+                Select(x => x.Book).ToListAsync();
+            var data = await context.Set<OrderBook>().Where(x => x.Order.Customer.DNI.Contains(dni ?? string.Empty)).AsNoTracking().
+                Select(x => new OrderInfo
                 {
-                    Id = x.Id,
-                    DateStar = x.StartDate.ToShortDateString(),
-                    TimeStar = x.StartDate.ToShortTimeString(),
-                    Status = x.Status ? "Activo" : "Inactivo",
-                    CustomerId = x.CustomerId,
-                    FullName = $"{x.Customer.FirstName} {x.Customer.LastName}",
-                    DNI = x.Customer.DNI,
-                    Edad = x.Customer.Edad
-                }).ToListAsync();
+                    Id = x.OrderId,
+                    DateStar = x.Order.StartDate.ToShortDateString(),
+                    TimeStar = x.Order.StartDate.ToShortTimeString(),
+                    DateEnd = x.Order.StartDate.ToShortDateString(),
+                    TimeEnd = x.Order.StartDate.ToShortTimeString(),
+                    Status = x.Order.Status ? "Activo" : "Inactivo",
+                    Finalized = x.Order.Finalized ? "Finalizado" : "Pendiente",
+                    CustomerId = x.Order.CustomerId,
+                    FullName = x.Order.Customer.FirstName + " " + x.Order.Customer.LastName,
+                    DNI = x.Order.Customer.DNI,
+                    Edad = x.Order.Customer.Edad,
+                    Books = listBooks
+                }).FirstOrDefaultAsync();
+            return data ?? new OrderInfo(); ;
+
+        }
+        public async Task FinalizeAsync(int id)
+        {
+            var entity = await GetAsync(id);
+            if(entity is not null)
+            {
+                entity.Finalized = true;
+                entity.EndDate = DateTime.Now;
+                await UpdateAsync();
+            }
+        }
+        public override async Task UpdateAsync()
+        {
+            await context.Database.CommitTransactionAsync();
+            await base.UpdateAsync();
+        }
+        public async Task CreateTransactionAsync() 
+        {
+            await context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        }
+        public async Task RollBackAsync() 
+        {
+            await context.Database.RollbackTransactionAsync();
         }
     }
 }

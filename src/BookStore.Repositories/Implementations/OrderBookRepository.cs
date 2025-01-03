@@ -3,6 +3,7 @@ using BookStore.Entities.Info;
 using BookStore.Persistence;
 using BookStore.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace BookStore.Repositories.Implementations
 {
@@ -13,11 +14,19 @@ namespace BookStore.Repositories.Implementations
         }
         public override async Task<ICollection<OrderBook>> GetAsync()
         {
-            return await context.Set<OrderBook>().AsNoTracking().ToListAsync();
+            return await context.Set<OrderBook>().Include(x => x.Order).Include(x => x.Book).Include(x => x.Order.Customer).AsNoTracking().ToListAsync();
         }
-        public async Task<ICollection<OrderBookInfo>> GetIdAsync(int id)
+        public override async Task<OrderBook?> GetAsync(int id)
         {
-            return await context.Set<OrderBook>()
+            return await context.Set<OrderBook>().Include(x => x.Order).Include(x => x.Book).Include(x => x.Order.Customer).Where(x => x.Id == id).AsNoTracking().FirstOrDefaultAsync();
+        }
+        public override async Task<ICollection<OrderBook>> GetAsync(Expression<Func<OrderBook, bool>> predicate)
+        {
+            return await context.Set<OrderBook>().Include(x => x.Order).Include(x => x.Book).Include(x => x.Order.Customer).Where(predicate).AsNoTracking().ToListAsync();
+        }
+        public async Task<OrderBookInfo> GetIdAsync(int id)
+        {
+            var data = await context.Set<OrderBook>()
                 .Where(x => x.Id == id).AsNoTracking()
                 .Select(x => new OrderBookInfo
                 {
@@ -33,13 +42,16 @@ namespace BookStore.Repositories.Implementations
                     OrderId = x.OrderId,
                     OrderDateStar = x.Order.StartDate.ToShortDateString(),
                     OrderTimeStar = x.Order.StartDate.ToShortTimeString(),
+                    OrderDateEnd = x.Order.StartDate.ToShortDateString(),
+                    OrderTimeEnd = x.Order.StartDate.ToShortTimeString(),
                     OrderStatus = x.Order.Status ? "Activo" : "Inactivo",
+                    OrderFinalized = x.Order.Finalized ? "Finalizado" : "Pendiente",
                     CustomerId = x.Order.CustomerId,
                     CustomerFullName = $"{x.Order.Customer.FirstName} {x.Order.Customer.LastName}",
                     CustomerDNI = x.Order.Customer.DNI,
                     CustomerEdad = x.Order.Customer.Edad
-                }).ToListAsync();
-
+                }).FirstOrDefaultAsync();
+            return data ?? new OrderBookInfo();
         }
     }
 }

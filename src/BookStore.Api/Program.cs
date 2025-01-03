@@ -25,10 +25,16 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IOrderBookRepository, OrderBookRepository>();
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderBookService, OrderBookService>();
 
 builder.Services.AddAutoMapper(config =>
 {
     config.AddProfile<BookProfile>();
+    config.AddProfile<CustomerProfile>();
+    config.AddProfile<OrderProfile>();
+    config.AddProfile<OrderBookProfile>();
 });
 
 var app = builder.Build();

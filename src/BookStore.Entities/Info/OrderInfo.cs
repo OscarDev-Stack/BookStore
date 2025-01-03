@@ -6,10 +6,14 @@
         //public DateTime StartDate { get; set; }
         public string DateStar { get; set; } = default!;
         public string TimeStar { get; set; } = default!;
+        public string DateEnd { get; set; } = default!;
+        public string TimeEnd { get; set; } = default!;
         public string Status { get; set; } = default!;
+        public string Finalized { get; set; } = default!;
         public int CustomerId { get; set; }
         public string FullName { get; set; } = default!;
         public string DNI { get; set; } = default!;
         public int Edad { get; set; }
+        public virtual List<Book> Books { get; set; } = default!;
     }
 }

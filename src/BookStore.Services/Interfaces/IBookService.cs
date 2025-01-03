@@ -12,7 +12,6 @@ namespace BookStore.Services.Interfaces
         Task<BaseResponseGeneric<int>> AddAsync(BookRequestDto request);
         Task<BaseResponse> UpdateAsync(int id, BookRequestDto request);
         Task<BaseResponse> DeleteAsync(int id);
-        Task<BaseResponse> FinalizeAsync(int id);
 
     }
 }

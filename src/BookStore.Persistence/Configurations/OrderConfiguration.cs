@@ -9,7 +9,9 @@ namespace BookStore.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Order> builder)
         {
             builder.Property(x => x.StartDate).HasColumnType("datetime").HasDefaultValueSql("GETDATE()");
+            builder.Property(x => x.OperationNumbre).HasMaxLength(10);
             builder.ToTable("Orders", "BookStore");
+            builder.HasQueryFilter(x => x.Status);
         }
     }
 }

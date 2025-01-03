@@ -4,6 +4,6 @@ namespace BookStore.Repositories.Interfaces
 {
     public interface IOrderBookRepository : IRepositoryBase<OrderBook>
     {
-        Task<ICollection<OrderBookInfo>> GetIdAsync(int id);
+        Task<OrderBookInfo> GetIdAsync(int id);
     }
 }

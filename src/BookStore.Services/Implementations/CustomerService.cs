@@ -8,25 +8,25 @@ using Microsoft.Extensions.Logging;
 
 namespace BookStore.Services.Implementations
 {
-    public class BookService : IBookService
+    public class CustomerService : ICustomerService
     {
-        private readonly IBookRepository repository;
-        private readonly ILogger<BookService> logger;
+        private readonly ICustomerRepository repository;
+        private readonly ILogger<CustomerService> logger;
         private readonly IMapper mapper;
 
-        public BookService(IBookRepository repository, ILogger<BookService> logger, IMapper mapper) 
+        public CustomerService(ICustomerRepository repository, ILogger<CustomerService> logger, IMapper mapper)
         {
             this.repository = repository;
             this.logger = logger;
             this.mapper = mapper;
         }
-        public async Task<BaseResponseGeneric<ICollection<BookResponseDto>>> GetAsync()
+        public async Task<BaseResponseGeneric<ICollection<CustomerResponseDto>>> GetAsync()
         {
-            var response = new BaseResponseGeneric<ICollection<BookResponseDto>>();
+            var response = new BaseResponseGeneric<ICollection<CustomerResponseDto>>();
             try
             {
                 var data = await repository.GetAsync();
-                response.Data = mapper.Map<ICollection<BookResponseDto>>(data);
+                response.Data = mapper.Map<ICollection<CustomerResponseDto>>(data);
                 response.Success = response.Data is not null;
             }
             catch (Exception ex)
@@ -36,13 +36,13 @@ namespace BookStore.Services.Implementations
             }
             return response;
         }
-        public async Task<BaseResponseGeneric<BookResponseDto>> GetAsync(int id)
+        public async Task<BaseResponseGeneric<CustomerResponseDto>> GetAsync(int id)
         {
-            var response = new BaseResponseGeneric<BookResponseDto>();
+            var response = new BaseResponseGeneric<CustomerResponseDto>();
             try
             {
                 var data = await repository.GetAsync(id);
-                response.Data = mapper.Map<BookResponseDto>(data);
+                response.Data = mapper.Map<CustomerResponseDto>(data);
                 response.Success = response.Data is not null;
             }
             catch (Exception ex)
@@ -52,13 +52,13 @@ namespace BookStore.Services.Implementations
             }
             return response;
         }
-        public async Task<BaseResponseGeneric<ICollection<BookResponseDto>>> GetAuthorAsync(string? author)
+        public async Task<BaseResponseGeneric<ICollection<CustomerResponseDto>>> GetAsync(string? fullName)
         {
-            var response = new BaseResponseGeneric<ICollection<BookResponseDto>>();
+            var response = new BaseResponseGeneric<ICollection<CustomerResponseDto>>();
             try
             {
-                var data = await repository.GetAsync(x => x.Author.Contains(author ?? string.Empty), x => x.Name);
-                response.Data = mapper.Map<ICollection<BookResponseDto>>(data);
+                var data = await repository.GetAsync(x => (x.FirstName + " " + x.LastName).Contains(fullName ?? string.Empty), x => x.LastName);
+                response.Data = mapper.Map<ICollection<CustomerResponseDto>>(data);
                 response.Success = response.Data.Count > 0;
             }
             catch (Exception ex)
@@ -68,13 +68,13 @@ namespace BookStore.Services.Implementations
             }
             return response;
         }
-        public async Task<BaseResponseGeneric<ICollection<BookResponseDto>>> GetNameAsync(string? name)
+        public async Task<BaseResponseGeneric<ICollection<CustomerResponseDto>>> GetCustomerDNIAsync(string? dni)
         {
-            var response = new BaseResponseGeneric<ICollection<BookResponseDto>>();
+            var response = new BaseResponseGeneric<ICollection<CustomerResponseDto>>();
             try
             {
-                var data = await repository.GetAsync(x => x.Name.Contains(name ?? string.Empty), x => x.Name);
-                response.Data = mapper.Map<ICollection<BookResponseDto>>(data);
+                var data = await repository.GetAsync(x => x.DNI.Contains(dni ?? string.Empty), x => x.LastName);
+                response.Data = mapper.Map<ICollection<CustomerResponseDto>>(data);
                 response.Success = response.Data.Count > 0;
             }
             catch (Exception ex)
@@ -84,12 +84,12 @@ namespace BookStore.Services.Implementations
             }
             return response;
         }
-        public async Task<BaseResponseGeneric<int>> AddAsync(BookRequestDto request)
+        public async Task<BaseResponseGeneric<int>> AddAsync(CustomerRequestDto request)
         {
             var response = new BaseResponseGeneric<int>();
             try
             {
-                var data = mapper.Map<Book>(request);
+                var data = mapper.Map<Customer>(request);
                 var dataId = await repository.AddAsync(data);
                 response.Success = true;
                 response.Data = dataId;
@@ -107,7 +107,7 @@ namespace BookStore.Services.Implementations
             try
             {
                 var data = await repository.GetAsync(id);
-                if(data is not null)
+                if (data is not null)
                 {
                     await repository.DeleteAsync(id);
                     response.Success = true;
@@ -121,7 +121,7 @@ namespace BookStore.Services.Implementations
             }
             return response;
         }
-        public async Task<BaseResponse> UpdateAsync(int id, BookRequestDto request)
+        public async Task<BaseResponse> UpdateAsync(int id, CustomerRequestDto request)
         {
             var response = new BaseResponse();
             try
