@@ -8,7 +8,8 @@ namespace BookStore.Services.Interfaces
     {
         Task<BaseResponseGeneric<ICollection<OrderResponseDto>>> GetAsync();
         Task<BaseResponseGeneric<OrderResponseDto>> GetAsync(int id);
-        Task<BaseResponseGeneric<OrderInfo>> GetAsync(string? dni);
+        Task<BaseResponseGeneric<ICollection<OrderInfo>>> GetAsync(string? dni);
+        Task<BaseResponseGeneric<ICollection<OrderInfo>>> GetCustomerIdAsync(int customerId);
         Task<BaseResponseGeneric<int>> AddAsync(OrderRequestDto request);
         Task<BaseResponse> UpdateAsync(int id, OrderRequestDto request);
         Task<BaseResponse> DeleteAsync(int id);

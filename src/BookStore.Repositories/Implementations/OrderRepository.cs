@@ -4,6 +4,7 @@ using BookStore.Persistence;
 using BookStore.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Net;
 using System.Security.Cryptography.X509Certificates;
 
 namespace BookStore.Repositories.Implementations
@@ -31,28 +32,70 @@ namespace BookStore.Repositories.Implementations
             await context.SaveChangesAsync();
             return entity.Id;
         }
-        public async Task<OrderInfo> GetAsync(string? dni)
+        public async Task<ICollection<OrderInfo>> GetAsync(string? dni)
         {
-            var listBooks = await context.Set<OrderBook>().Where(x => x.Order.Customer.DNI.Contains(dni ?? string.Empty)).AsNoTracking().
-                Select(x => x.Book).ToListAsync();
-            var data = await context.Set<OrderBook>().Where(x => x.Order.Customer.DNI.Contains(dni ?? string.Empty)).AsNoTracking().
-                Select(x => new OrderInfo
+            var data = await context.Set<OrderBook>().Where(x => x.Order.Customer.DNI.Contains(dni ?? string.Empty)).IgnoreQueryFilters().AsNoTracking()
+                .GroupBy(x => new
                 {
-                    Id = x.OrderId,
-                    DateStar = x.Order.StartDate.ToShortDateString(),
-                    TimeStar = x.Order.StartDate.ToShortTimeString(),
-                    DateEnd = x.Order.StartDate.ToShortDateString(),
-                    TimeEnd = x.Order.StartDate.ToShortTimeString(),
-                    Status = x.Order.Status ? "Activo" : "Inactivo",
-                    Finalized = x.Order.Finalized ? "Finalizado" : "Pendiente",
-                    CustomerId = x.Order.CustomerId,
-                    FullName = x.Order.Customer.FirstName + " " + x.Order.Customer.LastName,
-                    DNI = x.Order.Customer.DNI,
-                    Edad = x.Order.Customer.Edad,
-                    Books = listBooks
-                }).FirstOrDefaultAsync();
-            return data ?? new OrderInfo(); ;
-
+                    x.OrderId,
+                    x.Order.StartDate,
+                    x.Order.Status,
+                    x.Order.Finalized,
+                    x.Order.CustomerId,
+                    x.Order.Customer.FirstName,
+                    x.Order.Customer.LastName,
+                    x.Order.Customer.DNI,
+                    x.Order.Customer.Edad
+                })
+                .Select(g => new OrderInfo
+                {
+                    Id = g.Key.OrderId,
+                    DateStar = g.Key.StartDate.ToShortDateString(),
+                    TimeStar = g.Key.StartDate.ToShortTimeString(),
+                    DateEnd = g.Key.StartDate.ToShortDateString(),
+                    TimeEnd = g.Key.StartDate.ToShortTimeString(),
+                    Status = g.Key.Status ? "Activo" : "Inactivo",
+                    Finalized = g.Key.Finalized ? "Finalizado" : "Pendiente",
+                    CustomerId = g.Key.CustomerId,
+                    FullName = g.Key.FirstName + " " + g.Key.LastName,
+                    DNI = g.Key.DNI,
+                    Edad = g.Key.Edad,
+                    Books = g.Select(x => x.Book).ToList()
+                }).ToListAsync();
+            return data;
+        }
+        public async Task<ICollection<OrderInfo>> GetCustomerIdAsync(int customerId)
+        {
+            //return await context.Set<Order>().Include(x => x.Customer).Where(x => x.CustomerId == customerId).ToListAsync();
+            var data = await context.Set<OrderBook>().Where(x => x.Order.CustomerId == customerId).IgnoreQueryFilters().AsNoTracking()
+                .GroupBy(x => new
+                {
+                    x.OrderId,
+                    x.Order.StartDate,
+                    x.Order.Status,
+                    x.Order.Finalized,
+                    x.Order.CustomerId,
+                    x.Order.Customer.FirstName,
+                    x.Order.Customer.LastName,
+                    x.Order.Customer.DNI,
+                    x.Order.Customer.Edad
+                })
+                .Select(g => new OrderInfo
+                {
+                    Id = g.Key.OrderId,
+                    DateStar = g.Key.StartDate.ToShortDateString(),
+                    TimeStar = g.Key.StartDate.ToShortTimeString(),
+                    DateEnd = g.Key.StartDate.ToShortDateString(),
+                    TimeEnd = g.Key.StartDate.ToShortTimeString(),
+                    Status = g.Key.Status ? "Activo" : "Inactivo",
+                    Finalized = g.Key.Finalized ? "Finalizado" : "Pendiente",
+                    CustomerId = g.Key.CustomerId,
+                    FullName = g.Key.FirstName + " " + g.Key.LastName,
+                    DNI = g.Key.DNI,
+                    Edad = g.Key.Edad,
+                    Books = g.Select(x => x.Book).ToList()
+                }).ToListAsync();
+            return data;
         }
         public async Task FinalizeAsync(int id)
         {

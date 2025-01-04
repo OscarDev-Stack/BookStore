@@ -4,12 +4,15 @@ using BookStore.Dto.Response;
 using BookStore.Entities;
 using BookStore.Repositories.Interfaces;
 using BookStore.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService service;
@@ -36,6 +39,12 @@ namespace BookStore.Api.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var response = await service.GetAsync(id);
+            return response.Success ? Ok(response) : NotFound(response);
+        }
+        [HttpGet("customerId")]
+        public async Task<IActionResult> GetCustomerId(int customerId)
+        {
+            var response = await service.GetCustomerIdAsync(customerId);
             return response.Success ? Ok(response) : NotFound(response);
         }
         [HttpPost]

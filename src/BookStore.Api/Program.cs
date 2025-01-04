@@ -5,8 +5,21 @@ using BookStore.Repositories.Interfaces;
 using BookStore.Services.Interfaces;
 using BookStore.Services.Implementations;
 using BookStore.Services.Profiles;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var corsConfiguration = "BookStoreCors";
+builder.Services.AddCors(setup =>
+{
+    setup.AddPolicy(corsConfiguration, policy =>
+    {
+        policy.AllowAnyOrigin();
+        policy.AllowAnyHeader().WithExposedHeaders(new string[] { "x-total" });
+        policy.AllowAnyMethod();
+    });
+});
 
 // Add services to the container.
 
@@ -19,6 +32,16 @@ builder.Services.AddDbContext<BookStoreDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection"));
 });
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+builder.Services.AddIdentity<BookStoreUserIdentity, IdentityRole>(policies =>
+{
+    policies.Password.RequireDigit = true;
+    policies.Password.RequiredLength = 8;
+    policies.User.RequireUniqueEmail = true;
+}).AddEntityFrameworkStores<BookStoreDbContext>().AddDefaultTokenProviders();
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
@@ -47,6 +70,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

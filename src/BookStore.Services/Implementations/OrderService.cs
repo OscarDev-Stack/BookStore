@@ -57,9 +57,25 @@ namespace BookStore.Services.Implementations
             }
             return response;
         }
-        public async Task<BaseResponseGeneric<OrderInfo>> GetAsync(string? dni)
+        public async Task<BaseResponseGeneric<ICollection<OrderInfo>>> GetCustomerIdAsync(int customerId)
         {
-            var response = new BaseResponseGeneric<OrderInfo>();
+            var response = new BaseResponseGeneric<ICollection<OrderInfo>>();
+            try
+            {
+                var data = await repository.GetCustomerIdAsync(customerId);
+                response.Data = data;
+                response.Success = response.Data is not null;
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Ocurrio un error al obtener la información.";
+                logger.LogError(ex, $"{response.ErrorMessage} {ex.Message}");
+            }
+            return response;
+        }
+        public async Task<BaseResponseGeneric<ICollection<OrderInfo>>> GetAsync(string? dni)
+        {
+            var response = new BaseResponseGeneric<ICollection<OrderInfo>>();
             try
             {
                 var data = await repository.GetAsync(dni);

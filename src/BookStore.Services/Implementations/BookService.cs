@@ -20,12 +20,12 @@ namespace BookStore.Services.Implementations
             this.logger = logger;
             this.mapper = mapper;
         }
-        public async Task<BaseResponseGeneric<ICollection<BookResponseDto>>> GetAsync()
+        public async Task<BaseResponseGeneric<ICollection<BookResponseDto>>> GetAsync(PaginationRequestDto pagination)
         {
             var response = new BaseResponseGeneric<ICollection<BookResponseDto>>();
             try
             {
-                var data = await repository.GetAsync();
+                var data = await repository.GetAsync(pagination);
                 response.Data = mapper.Map<ICollection<BookResponseDto>>(data);
                 response.Success = response.Data is not null;
             }
@@ -52,12 +52,12 @@ namespace BookStore.Services.Implementations
             }
             return response;
         }
-        public async Task<BaseResponseGeneric<ICollection<BookResponseDto>>> GetAuthorAsync(string? author)
+        public async Task<BaseResponseGeneric<ICollection<BookResponseDto>>> GetAuthorAsync(string? author, PaginationRequestDto pagination)
         {
             var response = new BaseResponseGeneric<ICollection<BookResponseDto>>();
             try
             {
-                var data = await repository.GetAsync(x => x.Author.Contains(author ?? string.Empty), x => x.Name);
+                var data = await repository.GetAsync(x => x.Author.Contains(author ?? string.Empty), x => x.Name, pagination);
                 response.Data = mapper.Map<ICollection<BookResponseDto>>(data);
                 response.Success = response.Data.Count > 0;
             }
@@ -68,12 +68,12 @@ namespace BookStore.Services.Implementations
             }
             return response;
         }
-        public async Task<BaseResponseGeneric<ICollection<BookResponseDto>>> GetNameAsync(string? name)
+        public async Task<BaseResponseGeneric<ICollection<BookResponseDto>>> GetNameAsync(string? name, PaginationRequestDto pagination)
         {
             var response = new BaseResponseGeneric<ICollection<BookResponseDto>>();
             try
             {
-                var data = await repository.GetAsync(x => x.Name.Contains(name ?? string.Empty), x => x.Name);
+                var data = await repository.GetAsync(x => x.Name.Contains(name ?? string.Empty), x => x.Name, pagination);
                 response.Data = mapper.Map<ICollection<BookResponseDto>>(data);
                 response.Success = response.Data.Count > 0;
             }

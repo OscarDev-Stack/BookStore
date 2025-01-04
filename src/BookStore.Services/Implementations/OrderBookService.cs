@@ -106,7 +106,7 @@ namespace BookStore.Services.Implementations
                     }
                     if (book is null)
                     {
-                        response.ErrorMessage = $"El libro con id: {request.OrderId} es incorrecto.";
+                        response.ErrorMessage = $"El libro con id: {request.BookId} es incorrecto.";
                         logger.LogWarning(response.ErrorMessage);
                     }
                 }

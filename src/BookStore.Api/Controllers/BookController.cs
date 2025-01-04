@@ -1,5 +1,7 @@
 ﻿using BookStore.Dto.Request;
 using BookStore.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Api.Controllers
@@ -15,9 +17,9 @@ namespace BookStore.Api.Controllers
             this.service = service;
         }
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery]PaginationRequestDto pagination)
         {
-            var response = await service.GetAsync();
+            var response = await service.GetAsync(pagination);
             return response.Success ? Ok(response) : NotFound(response);
         }
         [HttpGet("{id:int}")]
@@ -27,15 +29,15 @@ namespace BookStore.Api.Controllers
             return response.Success ? Ok(response) : NotFound(response);
         }
         [HttpGet("name")]
-        public async Task<IActionResult> GetName(string? name)
+        public async Task<IActionResult> GetName(string? name, [FromQuery] PaginationRequestDto pagination)
         {
-            var response = await service.GetNameAsync(name);
+            var response = await service.GetNameAsync(name, pagination);
             return response.Success ? Ok(response) : NotFound(response);
         }
         [HttpGet("author")]
-        public async Task<IActionResult> GetAuthor(string? author)
+        public async Task<IActionResult> GetAuthor(string? author, [FromQuery] PaginationRequestDto pagination)
         {
-            var response = await service.GetAuthorAsync(author);
+            var response = await service.GetAuthorAsync(author, pagination);
             return response.Success ? Ok(response) : NotFound(response);
         }
         [HttpPost]
