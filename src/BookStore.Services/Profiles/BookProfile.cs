@@ -10,7 +10,7 @@ namespace BookStore.Services.Profiles
         public BookProfile() 
         {
             CreateMap<Book, BookResponseDto>();
-            CreateMap<BookRequestDto, Book>();
+            CreateMap<BookRequestDto, Book>().ForMember(d => d.ImageUrl, o => o.Ignore());
         }
     }
 }

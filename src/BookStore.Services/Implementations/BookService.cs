@@ -2,10 +2,11 @@
 using BookStore.Dto.Request;
 using BookStore.Dto.Response;
 using BookStore.Entities;
-using BookStore.Repositories.Implementations;
+using BookStore.Persistence.Migrations;
 using BookStore.Repositories.Interfaces;
 using BookStore.Services.Interfaces;
 using Microsoft.Extensions.Logging;
+using MusicStore.Services.Interfaces;
 
 namespace BookStore.Services.Implementations
 {
@@ -14,12 +15,15 @@ namespace BookStore.Services.Implementations
         private readonly IBookRepository repository;
         private readonly ILogger<BookService> logger;
         private readonly IMapper mapper;
+        private readonly IFileStorage fileStorage;
+        private readonly string container = "books";
 
-        public BookService(IBookRepository repository, ILogger<BookService> logger, IMapper mapper) 
+        public BookService(IBookRepository repository, ILogger<BookService> logger, IMapper mapper, IFileStorage fileStorage) 
         {
             this.repository = repository;
             this.logger = logger;
             this.mapper = mapper;
+            this.fileStorage = fileStorage;
         }
         public async Task<BaseResponseGeneric<ICollection<BookResponseDto>>> GetAsync(PaginationRequestDto pagination)
         {
@@ -104,25 +108,39 @@ namespace BookStore.Services.Implementations
         public async Task<BaseResponseGeneric<int>> AddAsync(BookRequestDto request)
         {
             var response = new BaseResponseGeneric<int>();
+            Book entity = new Book();
             try
             {
                 var bookISBN = await repository.GetAsync(x => x.ISBN.Contains(request.ISBN));
-                if (bookISBN is null)
+                
+                if (bookISBN .Count == 0)
                 {
-                    var data = mapper.Map<Book>(request);
-                    var dataId = await repository.AddAsync(data);
-                    response.Success = true;
-                    response.Data = dataId; 
+                    entity = mapper.Map<Book>(request);
+                    if (request.Image is not null)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await request.Image.CopyToAsync(memoryStream);
+                            var content = memoryStream.ToArray();
+                            var extension = Path.GetExtension(request.Image.FileName);
+                            entity.ImageUrl = await fileStorage.SaveFile(content, extension, container, request.Image.ContentType);
+                        }
+                        var dataId = await repository.AddAsync(entity);
+                        response.Success = true;
+                        response.Data = dataId;
+                    }
                 }
-                else throw new InvalidOperationException(response.ErrorMessage = $"El cliente con ISBN del libro {request.ISBN} ya existe, favor de registralo.");
+                else throw new InvalidOperationException(response.ErrorMessage = $"El libro con ISBN  {request.ISBN} ya existe, favor de validaro.");
             }
             catch (InvalidOperationException ex)
             {
+                await fileStorage.DeleteFile(entity.ImageUrl ?? string.Empty, container);
                 response.ErrorMessage = ex.Message;
                 logger.LogError(ex, $"{response.ErrorMessage} {ex.Message}");
             }
             catch (Exception ex)
             {
+                await fileStorage.DeleteFile(entity.ImageUrl ?? string.Empty, container);
                 response.ErrorMessage = "Ocurrio un error al guardar el libro.";
                 logger.LogError(ex, $"{response.ErrorMessage} {ex.Message}");
             }
@@ -136,6 +154,7 @@ namespace BookStore.Services.Implementations
                 var data = await repository.GetAsync(id);
                 if(data is not null)
                 {
+                    await fileStorage.DeleteFile(data.ImageUrl ?? string.Empty, container);
                     await repository.DeleteAsync(id);
                     response.Success = true;
                 }
@@ -157,6 +176,18 @@ namespace BookStore.Services.Implementations
                 if (data is not null)
                 {
                     mapper.Map(request, data);
+                    if(request.Image is not null)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await request.Image.CopyToAsync(memoryStream);
+                            var content = memoryStream.ToArray();
+                            var extension = Path.GetExtension(request.Image.FileName);
+                            data.ImageUrl = await fileStorage.EditFile(content, extension, container, data.ImageUrl ?? string.Empty, request.Image.ContentType);
+                        }
+                    }
+                    else data.ImageUrl = string.Empty;
+
                     await repository.UpdateAsync();
                     response.Success = true;
                 }

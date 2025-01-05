@@ -54,14 +54,14 @@ namespace BookStore.Api.Controllers
         }
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = $"{Constants.RoleLibrarian},{Constants.RoleAdmin}")]
-        public async Task<IActionResult> Post(BookRequestDto book)
+        public async Task<IActionResult> Post([FromForm]BookRequestDto book)
         {
             var response = await service.AddAsync(book);
             return response.Success ? Ok(response) : BadRequest(response);
         }
         [HttpPut("{id:int}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = $"{Constants.RoleLibrarian},{Constants.RoleAdmin}")]
-        public async Task<IActionResult> Put(int id, BookRequestDto book)
+        public async Task<IActionResult> Put(int id,[FromForm] BookRequestDto book)
         {
             var response = await service.UpdateAsync(id, book);
             return response.Success ? Ok(response) : BadRequest(response);

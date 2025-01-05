@@ -11,6 +11,8 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using BookStore.Persistence.Seeders;
 using BookStore.Entities;
+using MusicStore.Services.Interfaces;
+using MusicStore.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,6 +81,7 @@ builder.Services.AddScoped<IOrderBookService, OrderBookService>();
 builder.Services.AddScoped<UserDataSeeder>();
 builder.Services.AddScoped<BookDataSeeder>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IFileStorage, FileStorageLocal>();
 #endregion
 
 #region Auto Mapper
@@ -100,6 +103,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
 
 app.UseAuthentication();
 
