@@ -1,4 +1,5 @@
-﻿using BookStore.Entities.Info;
+﻿using BookStore.Entities;
+using BookStore.Entities.Info;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +20,10 @@ namespace BookStore.Persistence
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             modelBuilder.Ignore<OrderInfo>();
             modelBuilder.Ignore<OrderBookInfo>();
-            modelBuilder.Entity<BookStoreUserIdentity>(x => x.ToTable("Usuarios"));
-            modelBuilder.Entity<IdentityRole>(x => x.ToTable("Rol"));
-            modelBuilder.Entity<IdentityUserRole<string>>(x => x.ToTable("UsuarioRol"));
+            modelBuilder.Ignore<AppSettings>();
+            modelBuilder.Entity<BookStoreUserIdentity>(x => x.ToTable("User"));
+            modelBuilder.Entity<IdentityRole>(x => x.ToTable("Role"));
+            modelBuilder.Entity<IdentityUserRole<string>>(x => x.ToTable("UserRole"));
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

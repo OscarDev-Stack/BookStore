@@ -7,12 +7,12 @@ using BookStore.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace BookStore.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Route("api/[controller]")]    
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService service;
@@ -22,6 +22,7 @@ namespace BookStore.Api.Controllers
             this.service = service;
         }
         [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Constants.RoleAdmin)]
         public async Task<IActionResult> Get()
         {
             var response = await service.GetAsync();
@@ -30,30 +31,35 @@ namespace BookStore.Api.Controllers
             //return Ok(ordersDb);
         }
         [HttpGet("dni")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Constants.RoleAdmin)]
         public async Task<IActionResult> Get(string? dni)
         {
             var response = await service.GetAsync(dni);
             return response.Success ? Ok(response) : NotFound(response);
         }
         [HttpGet("id")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Constants.RoleAdmin)]
         public async Task<IActionResult> Get(int id)
         {
             var response = await service.GetAsync(id);
             return response.Success ? Ok(response) : NotFound(response);
         }
         [HttpGet("customerId")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Constants.RoleAdmin)]
         public async Task<IActionResult> GetCustomerId(int customerId)
         {
             var response = await service.GetCustomerIdAsync(customerId);
             return response.Success ? Ok(response) : NotFound(response);
         }
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = $"{Constants.RoleLibrarian},{Constants.RoleAdmin}")]
         public async Task<IActionResult> Post(OrderRequestDto orderRequestDto)
         {
             var response = await service.AddAsync(orderRequestDto);
             return response.Success ? Ok(response) : BadRequest(response);
         }
         [HttpPut("{id:int}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = $"{Constants.RoleLibrarian},{Constants.RoleAdmin}")]
         public async Task<IActionResult> Put(int id, OrderRequestDto orderRequestDto)
         {
             var response = await service.UpdateAsync(id, orderRequestDto);
@@ -83,6 +89,7 @@ namespace BookStore.Api.Controllers
             //}
         }
         [HttpDelete("{id:int}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Constants.RoleAdmin)]
         public async Task<IActionResult> Delete(int id)
         {
             var response = await service.DeleteAsync(id);
@@ -108,6 +115,7 @@ namespace BookStore.Api.Controllers
             //}
         }
         [HttpPut("id")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = $"{Constants.RoleLibrarian},{Constants.RoleAdmin}")]
         public async Task<IActionResult> FinalizeAsync(int id)
         {
             var response = await service.FinalizeAsync(id);

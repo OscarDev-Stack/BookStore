@@ -6,7 +6,7 @@ namespace BookStore.Persistence
     public class BookStoreUserIdentity : IdentityUser
     {
         [StringLength(50)]
-        public string FirtName { get; set; } = default!;
+        public string FirstName { get; set; } = default!;
         [StringLength(50)]
         public string LastName { get; set; } = default!;
         public string Position { get; set; } = default!;

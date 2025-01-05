@@ -1,4 +1,5 @@
 ﻿using BookStore.Dto.Request;
+using BookStore.Entities;
 using BookStore.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

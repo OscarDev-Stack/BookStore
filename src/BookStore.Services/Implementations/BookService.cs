@@ -2,6 +2,7 @@
 using BookStore.Dto.Request;
 using BookStore.Dto.Response;
 using BookStore.Entities;
+using BookStore.Repositories.Implementations;
 using BookStore.Repositories.Interfaces;
 using BookStore.Services.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -84,19 +85,45 @@ namespace BookStore.Services.Implementations
             }
             return response;
         }
+        public async Task<BaseResponseGeneric<ICollection<BookResponseDto>>> GetISBNAsync(string? ISBN, PaginationRequestDto pagination)
+        {
+            var response = new BaseResponseGeneric<ICollection<BookResponseDto>>();
+            try
+            {
+                var data = await repository.GetAsync(x => x.ISBN.Contains(ISBN ?? string.Empty), x => x.Name, pagination);
+                response.Data = mapper.Map<ICollection<BookResponseDto>>(data);
+                response.Success = response.Data.Count > 0;
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Ocurrio un error al obtener la información.";
+                logger.LogError(ex, $"{response.ErrorMessage} {ex.Message}");
+            }
+            return response;
+        }
         public async Task<BaseResponseGeneric<int>> AddAsync(BookRequestDto request)
         {
             var response = new BaseResponseGeneric<int>();
             try
             {
-                var data = mapper.Map<Book>(request);
-                var dataId = await repository.AddAsync(data);
-                response.Success = true;
-                response.Data = dataId;
+                var bookISBN = await repository.GetAsync(x => x.ISBN.Contains(request.ISBN));
+                if (bookISBN is null)
+                {
+                    var data = mapper.Map<Book>(request);
+                    var dataId = await repository.AddAsync(data);
+                    response.Success = true;
+                    response.Data = dataId; 
+                }
+                else throw new InvalidOperationException(response.ErrorMessage = $"El cliente con ISBN del libro {request.ISBN} ya existe, favor de registralo.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                response.ErrorMessage = ex.Message;
+                logger.LogError(ex, $"{response.ErrorMessage} {ex.Message}");
             }
             catch (Exception ex)
             {
-                response.ErrorMessage = "Ocurrio un error al obtener la información.";
+                response.ErrorMessage = "Ocurrio un error al guardar el libro.";
                 logger.LogError(ex, $"{response.ErrorMessage} {ex.Message}");
             }
             return response;
