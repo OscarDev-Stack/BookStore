@@ -39,6 +39,7 @@ namespace BookStore.Services.Implementations
                     var user = await userManager.FindByEmailAsync(request.UserName);
                     response.Success = true;
                     response.Data = await ContruirToken(user);
+                    logger.LogInformation("User {0} logged in successfully", request.UserName);
                 }
                 else
                 {
