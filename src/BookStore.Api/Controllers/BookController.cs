@@ -31,25 +31,11 @@ namespace BookStore.Api.Controllers
             var response = await service.GetAsync(id);
             return response.Success ? Ok(response) : NotFound(response);
         }
-        [HttpGet("name")]
+        [HttpGet("search")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetName(string? name, [FromQuery] PaginationRequestDto pagination)
+        public async Task<IActionResult> GetName(string? search, [FromQuery] PaginationRequestDto pagination)
         {
-            var response = await service.GetNameAsync(name, pagination);
-            return response.Success ? Ok(response) : NotFound(response);
-        }
-        [HttpGet("author")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetAuthor(string? author, [FromQuery] PaginationRequestDto pagination)
-        {
-            var response = await service.GetAuthorAsync(author, pagination);
-            return response.Success ? Ok(response) : NotFound(response);
-        }
-        [HttpGet("ISBN")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetISBN(string? ISBN, [FromQuery] PaginationRequestDto pagination)
-        {
-            var response = await service.GetISBNAsync(ISBN, pagination);
+            var response = await service.GetAsync(search, pagination);
             return response.Success ? Ok(response) : NotFound(response);
         }
         [HttpPost]
