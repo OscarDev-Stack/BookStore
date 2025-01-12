@@ -21,7 +21,7 @@ namespace BookStore.Repositories.Implementations
         {
             var queryable = context.Set<Book>().AsNoTracking().AsQueryable();
             await httpContext.HttpContext.InsertPaginationHeader(queryable);
-            var response = await queryable.OrderBy(x => x.Id).Paginate(pagination).ToListAsync();
+            var response = await queryable.OrderBy(x => x.Name).Paginate(pagination).ToListAsync();
             return response;
         }
         public async Task<ICollection<Book>> GetAsync<TKey>(Expression<Func<Book, bool>> predicate, Expression<Func<Book, TKey>> orderBy, PaginationRequestDto pagination)

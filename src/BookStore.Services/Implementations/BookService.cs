@@ -62,11 +62,12 @@ namespace BookStore.Services.Implementations
             var response = new BaseResponseGeneric<ICollection<BookResponseDto>>();
             try
             {
-                var data = await repository.GetAsync(x => x.Name.Contains(search ?? string.Empty) || 
-                x.Author.Contains(search ?? string.Empty) || x.ISBN.Contains(search ?? string.Empty) || 
-                x.Editorial.Contains(search ?? string.Empty), x => x.Name, pagination);
+                search = string.IsNullOrEmpty(search) ? "" : search.ToUpper();
+                var data = await repository.GetAsync(x => x.Name.ToUpper().Contains(search ?? string.Empty) || 
+                x.Author.ToUpper().Contains(search ?? string.Empty) || x.ISBN.ToUpper().Contains(search ?? string.Empty) || 
+                x.Editorial.ToUpper().Contains(search ?? string.Empty), x => x.Name, pagination);
                 response.Data = mapper.Map<ICollection<BookResponseDto>>(data);
-                response.Success = response.Data.Count > 0;
+                response.Success = true;
             }
             catch (Exception ex)
             {
