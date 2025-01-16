@@ -43,13 +43,13 @@ namespace BookStore.Api.Controllers
             return response.Success ? Ok(response) : NotFound(response);
         }
         [HttpPost]
-        public async Task<IActionResult> Post(OrderBookRequestDto orderBookRequestDto)
+        public async Task<IActionResult> Post([FromForm] OrderBookRequestDto orderBookRequestDto)
         {
             var response = await service.AddAsync(orderBookRequestDto);
             return response.Success ? Ok(response) : BadRequest(response);
         }
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Put(int id, OrderBookRequestDto orderBookRequestDto)
+        public async Task<IActionResult> Put(int id, [FromForm] OrderBookRequestDto orderBookRequestDto)
         {
             var response = await service.UpdateAsync(id, orderBookRequestDto);
             return response.Success ? Ok(response) : BadRequest(response);

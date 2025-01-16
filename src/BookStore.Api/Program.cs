@@ -141,14 +141,20 @@ try
         config.AddProfile<OrderBookProfile>();
     });
     #endregion
+
+    if (builder.Environment.IsProduction())
+    {
+        builder.WebHost.UseUrls("https://192.168.1.98:8081");
+    }
+
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
+    //if (app.Environment.IsDevelopment())
+    //{
         app.UseSwagger();
         app.UseSwaggerUI();
-    }
+    //}
 
     app.UseHttpsRedirection();
 
