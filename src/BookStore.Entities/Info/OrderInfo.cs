@@ -10,6 +10,7 @@
         public string TimeEnd { get; set; } = default!;
         public string Status { get; set; } = default!;
         public string Finalized { get; set; } = default!;
+        public string OperationNumbre { get; set; } = default!;
         public int CustomerId { get; set; }
         public string FullName { get; set; } = default!;
         public string DNI { get; set; } = default!;

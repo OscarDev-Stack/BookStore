@@ -22,25 +22,25 @@ namespace BookStore.Api.Controllers
         public async Task<IActionResult> Get()
         {
             var response = await service.GetAsync();
-            return response.Success ? Ok(response) : NotFound(response);
+            return Ok(response);
         }
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
             var response = await service.GetAsync(id);
-            return response.Success ? Ok(response) : NotFound(response);
+            return Ok(response);
         }
         [HttpGet("fullName")]
         public async Task<IActionResult> Get(string? fullName)
         {
             var response = await service.GetAsync(fullName);
-            return response.Success ? Ok(response) : NotFound(response);
+            return Ok(response);
         }
         [HttpGet("DNI")]
         public async Task<IActionResult> GetCustomerDNI(string? dni)
         {
             var response = await service.GetCustomerDNIAsync(dni);
-            return response.Success ? Ok(response) : NotFound(response);
+            return Ok(response);
         }
         [HttpPost]
         public async Task<IActionResult> Post([FromForm] CustomerRequestDto customerRequestDto)
