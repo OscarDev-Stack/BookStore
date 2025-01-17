@@ -108,7 +108,7 @@ namespace BookStore.Repositories.Implementations
             {
                 entity.Finalized = true;
                 entity.EndDate = DateTime.Now;
-                await UpdateAsync();
+                await context.SaveChangesAsync();
             }
         }
         public override async Task UpdateAsync()

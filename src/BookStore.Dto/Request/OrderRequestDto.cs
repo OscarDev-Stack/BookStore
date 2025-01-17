@@ -6,6 +6,6 @@
         //public DateTime EndDate { get; set; }
         //public bool Finalized { get; set; }
         public int CustomerId { get; set; }
-        public bool Status { get; set; }
+        public bool Status { get; set; } = true;
     }
 }
