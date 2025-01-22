@@ -9,6 +9,7 @@ namespace BookStore.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Customer> builder)
         {
             builder.ToTable("Customers", "BookStore");
+            builder.Property(x => x.Status).HasDefaultValueSql("1");
             builder.HasQueryFilter(x => x.Status);
         }
     }

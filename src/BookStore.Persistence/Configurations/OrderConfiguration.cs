@@ -10,6 +10,7 @@ namespace BookStore.Persistence.Configurations
         {
             builder.Property(x => x.StartDate).HasColumnType("datetime").HasDefaultValueSql("GETDATE()");
             builder.Property(x => x.OperationNumbre).HasMaxLength(10);
+            builder.Property(x => x.Status).HasDefaultValueSql("1");
             builder.ToTable("Orders", "BookStore");
             builder.HasQueryFilter(x => x.Status);
         }

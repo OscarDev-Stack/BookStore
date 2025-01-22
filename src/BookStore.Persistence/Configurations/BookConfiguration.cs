@@ -12,6 +12,7 @@ namespace BookStore.Persistence.Configurations
             builder.Property(x => x.ImageUrl).HasMaxLength(100).IsUnicode(false);
             builder.HasIndex(x => x.Name);
             builder.ToTable("Books", "BookStore");
+            builder.Property(x => x.Status).HasDefaultValueSql("1");
             builder.HasQueryFilter(x => x.Status);
         }
     }
